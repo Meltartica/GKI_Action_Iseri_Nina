@@ -14,5 +14,5 @@
 3. Official KSU
 4. MKSU
 ## Params
-**Sublevel:**-Iseri_nina
-**Timestamp:**#1 SMP PREEMPT Fri Jan 24 18:48:47 UTC 2025
+- Sublevel: -Iseri_nina
+- Timestamp: #1 SMP PREEMPT Fri Jan 24 18:48:47 UTC 2025
