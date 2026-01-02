@@ -91,7 +91,7 @@ on:
         type: boolean
         default: false
       resukisu_multi_manager:
-        description: '添加ReSukiSU管理器适配'
+        description: '使用原SukiSU管理器'
         required: true
         type: boolean
         default: false
