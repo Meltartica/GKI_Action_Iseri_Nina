@@ -266,11 +266,21 @@ jobs:
         if: ${{ inputs.cancel_susfs }}
         run: |
           cd "$CONFIG/common"
-          echo "正在应用 Manual Hook 源码补丁..."
-          cp ../../SukiSU_patch/hooks/hooks/scope_min_manual_hooks_v1.6.patch ./
-          patch -p1 -F 3 --fuzz=5 < scope_min_manual_hooks_v1.6.patch || true
-          echo "已启用 Manual Hook"
-
+          echo "正在应用 Manual Hook v1.9 补丁..."
+          
+          # $GITHUB_WORKSPACE 代表仓库根目录
+          MY_PATCH="$GITHUB_WORKSPACE/patches/scope_min_manual_hooks_v1.9.patch"
+          
+          # 检查文件是否存在
+          if [ -f "$MY_PATCH" ]; then
+              echo "找到补丁文件，开始应用..."
+              patch -p1 -F 3 --fuzz=5 < "$MY_PATCH" || true
+              echo "成功应用 Manual Hook 补丁"
+          else
+              echo "找不到补丁文件: $MY_PATCH"
+              exit 1
+          fi
+          
       - name: 注入 ZRAM/BBG 补丁
         run: |
           cd "$CONFIG/common"
