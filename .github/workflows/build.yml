@@ -262,26 +262,52 @@ jobs:
           cd common
           patch -p1 --fuzz=3 < 50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch
 
-      - name: 在取消SUSFS时启用manual_hook
+      - name: 在取消SUSFS时启用manual_hook (严格检查版)
         if: ${{ inputs.cancel_susfs }}
         run: |
           cd "$CONFIG/common"
-          echo "正在应用 Manual Hook v1.9 补丁..."
+          echo "正在应用 Manual Hook 补丁"
           
-          # $GITHUB_WORKSPACE 代表仓库根目录
           PATCH="$GITHUB_WORKSPACE/patches/resukisu_manual_hooks.patch"
           
           # 检查文件是否存在
-          if [ -f "$PATCH" ]; then
-              echo "找到补丁文件，开始应用..."
-              patch -p1 -F 3 --fuzz=5 < "$PATCH" || true
-          # 绕过 ksu_handle_newfstat_ret 钩子检查 
-          #    sed -i '/ksu_handle_newfstat_ret/a \\t\/\/ ksu_handle_fstat64_ret (Fake signature to pass ReSukiSU check)' fs/stat.c
-              echo "成功应用 Manual Hook 补丁"
-          else
-              echo "找不到补丁文件: $MY_PATCH"
+          if [ ! -f "$PATCH" ]; then
+              echo "找不到补丁文件: $PATCH"
               exit 1
           fi
+
+          # 执行 Patch 并捕获所有输出
+          set +e 
+          
+          echo "正在执行 patch 命令..."
+          
+          patch -p1 -F 3 --fuzz=5 < "$MY_PATCH" > patch_log.txt 2>&1
+          
+          # 记录 patch 命令本身的退出代码
+          PATCH_EXIT_CODE=$?
+          
+          set -e
+
+          # 3. 显示完整日志
+          echo "====================== PATCH OUTPUT START ======================"
+          cat patch_log.txt
+          echo "====================== PATCH OUTPUT END   ======================"
+        
+          if [ $PATCH_EXIT_CODE -ne 0 ]; then
+              echo "Patch 命令返回了错误代码 ($PATCH_EXIT_CODE)"
+              exit 1
+          elif grep -qi "FAILED" patch_log.txt; then
+              echo "检测到 Hunk FAILED (补丁未能应用)"
+              exit 1
+          elif grep -qi "malformed" patch_log.txt; then
+              echo "检测到 malformed patch (补丁格式/行号/空行错误)"
+              exit 1
+          elif grep -qi "unexpected end" patch_log.txt; then
+              echo "检测到 unexpected end (补丁文件可能不完整)"
+              exit 1
+          else
+              echo "Manual Hook 补丁已成功应用"
+          fi 		
           
       - name: 注入 ZRAM/BBG 补丁
         run: |
