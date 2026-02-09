@@ -374,14 +374,6 @@ jobs:
           DEFCONFIG="common/arch/arm64/configs/gki_defconfig"
           echo "CONFIG_KSU=y" >> $DEFCONFIG
           echo "CONFIG_WERROR=n" >> $DEFCONFIG
-          echo "CONFIG_PSTORE=y" >> $DEFCONFIG
-          echo "CONFIG_RAMOOPS=y" >> $DEFCONFIG
-          echo "CONFIG_PSTORE_RAM=y" >> $DEFCONFIG
-          echo "CONFIG_PSTORE_PMSG=y" >> $DEFCONFIG
-          echo "CONFIG_PSTORE_ZONE=y" >> $DEFCONFIG
-          echo "CONFIG_MAGIC_SYSRQ=y" >> $DEFCONFIG
-          echo "CONFIG_PSTORE_FTRACE=y" >> $DEFCONFIG
-          echo "CONFIG_PSTORE_CONSOLE=y" >> $DEFCONFIG
           
           if [[ "${{ inputs.kernelsu_variant }}" == *"SukiSU"* ]] && [[ "${{ inputs.use_kpm }}" == "true" ]]; then
              echo "CONFIG_KPM=y" >> $DEFCONFIG
@@ -398,15 +390,6 @@ jobs:
              echo "CONFIG_CRYPTO_LZO=y" >> $DEFCONFIG
              echo "CONFIG_CRYPTO_LZ4HC=y" >> $DEFCONFIG
              echo "CONFIG_CRYPTO_LZ4KD=y" >> $DEFCONFIG
-             echo "CONFIG_ZRAM_DEF_COMP_LZORLE=y" >> $DEFCONFIG
-             echo "CONFIG_ZRAM_DEF_COMP_ZSTD=y" >> $DEFCONFIG
-             echo "CONFIG_ZRAM_DEF_COMP_LZ4=y" >> $DEFCONFIG
-             echo "CONFIG_ZRAM_DEF_COMP_LZO=y" >> $DEFCONFIG
-             echo "CONFIG_ZRAM_DEF_COMP_LZ4HC=y" >> $DEFCONFIG
-             echo "CONFIG_ZRAM_DEF_COMP_842=y" >> $DEFCONFIG
-             echo "CONFIG_ZRAM_DEF_COMP_LZ4K=y" >> $DEFCONFIG
-             echo "CONFIG_ZRAM_DEF_COMP_LZ4K_OPLUS=y" >> $DEFCONFIG
-             echo "CONFIG_ZRAM_DEF_COMP_DEFLATE=y" >> $DEFCONFIG
           fi
           
           if [ "${{ inputs.use_bbg }}" == "true" ]; then echo "CONFIG_BBG=y" >> $DEFCONFIG; fi
@@ -419,18 +402,6 @@ jobs:
           if [ "${{ inputs.cancel_susfs }}" == "false" ]; then
              # 没取消 SUSFS，则启用 SUSFS 配置
              echo "CONFIG_KSU_SUSFS=y" >> $DEFCONFIG
-             echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> $DEFCONFIG
-             echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> $DEFCONFIG
-             echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> $DEFCONFIG
-             echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> $DEFCONFIG
-             echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y" >> $DEFCONFIG
-             echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> $DEFCONFIG
-             echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> $DEFCONFIG
-             echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> $DEFCONFIG
-             echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> $DEFCONFIG
-             echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> $DEFCONFIG
-             echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> $DEFCONFIG
-             echo "CONFIG_KSU_SUSFS_SUS_MAP=y" >> $DEFCONFIG
           else
              echo "CONFIG_KSU_MANUAL_HOOK=y" >> $DEFCONFIG
              echo "已在 Defconfig 中启用 CONFIG_KSU_MANUAL_HOOK"
